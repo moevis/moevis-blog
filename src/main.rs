@@ -12,7 +12,6 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-use rocket::response::content::Html;
 use std::io::Read;
 use rocket::response::Failure;
 use rocket::http::Status;
@@ -21,12 +20,13 @@ use rocket::response::NamedFile;
 use std::fs::File;
 use std::path::Path;
 use comrak::{markdown_to_html, ComrakOptions};
-use rocket::response::content;
 use rocket_contrib::Template;
 
 mod context;
 mod siteconfig;
+mod post;
 
+use post::Post;
 use context::Context;
 
 #[get("/")]
@@ -36,7 +36,7 @@ fn index() -> Template {
 }
 
 #[get("/posts/<post_name>")]
-fn posts(post_name: String) -> Result<content::Html<String>, Failure> {
+fn posts(post_name: String) -> Result<Template, Failure> {
     let mut content = String::new();
     let filename = format!("posts/{}.md", post_name);
     if let Ok(mut result) = File::open(filename) {
@@ -44,7 +44,13 @@ fn posts(post_name: String) -> Result<content::Html<String>, Failure> {
             let mut markdown_opt = ComrakOptions::default();
             markdown_opt.safe = false;
             let markdown = markdown_to_html(&content, &markdown_opt);
-            Ok(Html(markdown))
+            let mut post = Post {
+                title: post_name,
+                content: markdown,
+            };
+            let mut context = Context::new();
+            context.post = Some(post);
+            Ok(Template::render("posts", &context))
         } else {
             Err(Failure(Status::InternalServerError))
         }
@@ -58,11 +64,7 @@ fn static_file(path: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(path)).ok()
 }
 
-use siteconfig::SiteConfig;
-use siteconfig::SITE_CONFIG;
-
 fn main() {
-    println!("{:?}", SiteConfig::new());
     rocket::ignite()
         .mount("/", routes![
             index,

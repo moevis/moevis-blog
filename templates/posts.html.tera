@@ -1,5 +1,16 @@
 {% extends "base" %}
 
+{% block style %}
+<link rel="stylesheet" href="/static/css/posts.css" />
+<link rel="stylesheet" href="/static/css/default.css">
+{% endblock style %}
+
+{% block script %}
+<script src="/static/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+{% endblock script %}
+
 {% block content %}
-posts
+<h1>{{ post.title | safe }}</h1>
+<article>{{ post.content | safe }}</article>
 {% endblock content %}
