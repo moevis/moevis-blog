@@ -7,6 +7,10 @@ authors = ["moevis <moevery@gmail.com>"]
 rocket = "0.3.16"
 rocket_codegen = "0.3.16"
 comrak = "*"
+config = "*"
+lazy_static = "*"
+serde = "*"
+serde_derive = "*"
 
 [dependencies.rocket_contrib]
 version = "*"

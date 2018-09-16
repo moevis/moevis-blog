@@ -1,9 +1,16 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+#[macro_use]
+extern crate lazy_static;
 extern crate rocket;
 extern crate comrak;
+#[macro_use]
 extern crate rocket_contrib;
+extern crate config;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 
 use rocket::response::content::Html;
 use std::io::Read;
@@ -17,10 +24,15 @@ use comrak::{markdown_to_html, ComrakOptions};
 use rocket::response::content;
 use rocket_contrib::Template;
 
+mod context;
+mod siteconfig;
+
+use context::Context;
 
 #[get("/")]
-fn index() -> &'static str {
-    "hello world"
+fn index() -> Template {
+    let arg = Context::new();
+    Template::render("index", &arg) 
 }
 
 #[get("/posts/<post_name>")]
@@ -46,7 +58,11 @@ fn static_file(path: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(path)).ok()
 }
 
+use siteconfig::SiteConfig;
+use siteconfig::SITE_CONFIG;
+
 fn main() {
+    println!("{:?}", SiteConfig::new());
     rocket::ignite()
         .mount("/", routes![
             index,
