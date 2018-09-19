@@ -28,6 +28,7 @@ mod post;
 
 use post::Post;
 use context::Context;
+use std::collections::HashMap;
 
 #[get("/")]
 fn index() -> Template {
@@ -64,6 +65,12 @@ fn static_file(path: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(path)).ok()
 }
 
+#[catch(404)]
+fn not_found() -> Template {
+    let map: HashMap<String, String> = HashMap::new();
+    Template::render("error/not_found", &map)
+}
+
 fn main() {
     rocket::ignite()
         .mount("/", routes![
@@ -72,5 +79,6 @@ fn main() {
             static_file,
         ])
         .attach(Template::fairing())
+        .catch(catchers![not_found])
         .launch();
 }
