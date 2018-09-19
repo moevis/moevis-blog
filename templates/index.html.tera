@@ -1,5 +1,11 @@
 {% extends "base" %}
 
 {% block content %}
-content
+
+<ul>
+{% for post in posts %}
+    <li><a href="/posts/{{ post }}">{{ post }}</a></li>
+{% endfor %}
+</ul>
+
 {% endblock content %}

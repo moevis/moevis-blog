@@ -25,14 +25,15 @@ use rocket_contrib::Template;
 mod context;
 mod siteconfig;
 mod post;
+mod util;
 
 use post::Post;
-use context::Context;
+use context::{ Context, PostListContext };
 use std::collections::HashMap;
 
 #[get("/")]
 fn index() -> Template {
-    let arg = Context::new();
+    let arg = PostListContext::new();
     Template::render("index", &arg) 
 }
 
