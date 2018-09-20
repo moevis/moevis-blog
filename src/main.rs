@@ -26,15 +26,41 @@ mod context;
 mod siteconfig;
 mod post;
 mod util;
+mod page;
 
 use post::Post;
-use context::{ Context, PostListContext };
+use context::{ Context, PostListContext, PageContext };
 use std::collections::HashMap;
+use util::render_markdown;
+use page::Page;
 
 #[get("/")]
 fn index() -> Template {
     let arg = PostListContext::new();
     Template::render("index", &arg) 
+}
+
+#[get("/pages/<page_name>")]
+fn site_pages(page_name: String) -> Result<Template, Failure> {
+    let filename = format!("pages/{}.md", page_name);
+    let mut content = String::new();
+    if let Ok(mut result) = File::open(filename) {
+        if let Ok(_) = result.read_to_string(&mut content) {
+            let markdown = render_markdown(&mut content);
+            let mut page = Page {
+                name: page_name.clone(),
+                content: markdown,
+            };
+            let mut context = PageContext::new();
+            context.page = Some(page);
+            context.current_page = Some(page_name);
+            Ok(Template::render("pages", &context))
+        } else {
+            Err(Failure(Status::InternalServerError))
+        }
+    } else {
+        Err(Failure(Status::NotFound))
+    }
 }
 
 #[get("/posts/<post_name>")]
@@ -43,9 +69,7 @@ fn posts(post_name: String) -> Result<Template, Failure> {
     let filename = format!("posts/{}.md", post_name);
     if let Ok(mut result) = File::open(filename) {
         if let Ok(_) = result.read_to_string(&mut content) {
-            let mut markdown_opt = ComrakOptions::default();
-            markdown_opt.safe = false;
-            let markdown = markdown_to_html(&content, &markdown_opt);
+            let markdown = render_markdown(&mut content);
             let mut post = Post {
                 title: post_name,
                 content: markdown,
@@ -78,6 +102,7 @@ fn main() {
             index,
             posts,
             static_file,
+            site_pages,
         ])
         .attach(Template::fairing())
         .catch(catchers![not_found])

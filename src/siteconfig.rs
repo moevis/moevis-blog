@@ -3,38 +3,32 @@ use std::collections::HashMap;
 use config::File;
 
 lazy_static! {
-    pub static ref SITE_CONFIG: HashMap<String, String> = {
+    pub static ref SITE_CONFIG: SiteConfig = {
         let mut config = Config::default();
         config.merge(File::with_name("site_config.yml")).unwrap();
-        let mut m: HashMap<String, String> = HashMap::new();
 
-        let site_config_keys = ["site_url", "site_title", "site_subtitle", "site_author"];
-        for key in site_config_keys.iter() {
-            m.insert(
-                key.to_string(),
-                config.get(key).expect(
-                    &format!("{} is required in site_config.yml", key))
-            );
-        }
-        m
+        let site_config = SiteConfig {
+            site_author:  config.get("site_author").expect("site_author is required in site_config.yml"),
+            site_title: config.get("site_title").expect("site_title is required in site_config.yml"),
+            site_subtitle: config.get("site_subtitle").expect("site_subtitle is required in site_config.yml"),
+            site_url: config.get("site_url").expect("site_url is required in site_config.yml"),
+            pages: config.get("pages").expect("pages is required in site_config.yml"),
+        };
+        site_config
     };
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct SiteConfig {
     pub site_url: String,
     pub site_title: String,
     pub site_subtitle: String,
     pub site_author: String,
+    pub pages: Vec<String>,
 }
 
 impl SiteConfig {
     pub fn new() -> SiteConfig {
-        SiteConfig {
-            site_url: SITE_CONFIG.get("site_url").unwrap().to_string(),
-            site_title: SITE_CONFIG.get("site_title").unwrap().to_string(),
-            site_subtitle: SITE_CONFIG.get("site_subtitle").unwrap().to_string(),
-            site_author: SITE_CONFIG.get("site_author").unwrap().to_string(),
-        }
+        SITE_CONFIG.clone()
     }
 }

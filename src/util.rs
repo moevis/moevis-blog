@@ -1,3 +1,4 @@
+use comrak::{ ComrakOptions, markdown_to_html };
 use std::fs;
 
 pub fn get_post_list() -> Vec<String> {
@@ -10,4 +11,11 @@ pub fn get_post_list() -> Vec<String> {
         }
     }
     posts
+}
+
+pub fn render_markdown(content: &mut String) -> String {
+    let mut markdown_opt = ComrakOptions::default();
+    markdown_opt.safe = false;
+    let markdown = markdown_to_html(&content, &markdown_opt);
+    markdown
 }

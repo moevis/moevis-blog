@@ -1,0 +1,105 @@
+@font-face {
+    font-family: Chinese;
+    font-weight: normal;
+    src: STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑";
+  }
+  html {
+    font-size: 16px;
+  }
+  body {
+    background: #fff;
+    font-family: Chinese, sans-serif;
+    color: #555;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    position: relative;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-weight: bold;
+    line-height: 1.4em;
+  }
+  h1 {
+    font-size: 2em;
+    line-height: 1.2em;
+  }
+  h2 {
+    font-size: 1.5em;
+    line-height: 1.225em;
+  }
+  h3 {
+    font-size: 1.3em;
+    line-height: 1.43em;
+  }
+  h4 {
+    font-size: 1.2em;
+  }
+  h5 {
+    font-size: 1em;
+  }
+  h6 {
+    font-size: 1em;
+    color: #999;
+  }
+  hr {
+    border: 1px solid #ddd;
+  }
+  a {
+    text-decoration: none;
+    color: #258fb8;
+  }
+  a:hover,
+  a:active {
+    text-decoration: underline;
+  }
+  ul,
+  ol {
+    padding-left: 2em;
+  }
+  .task-list {
+    padding-left: 2em;
+  }
+  .task-list-item {
+    padding-left: 1.6em;
+  }
+  .task-list-item input {
+    top: 3px;
+    left: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  table th {
+    font-weight: bold;
+    border-bottom: 3px solid #ddd;
+    padding-bottom: 0.5em;
+  }
+  table td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  blockquote {
+    border-left: 5px solid #ddd;
+    padding-left: 0.5em;
+    font-family: Source Han Serif SC, serif;
+    color: #555;
+  }
+  blockquote blockquote {
+    padding-right: 0;
+  }
+  .md-fences,
+  code,
+  tt {
+    margin: 0 0.3em;
+    padding: 0 0.3em;
+    background: #eee;
+    font-family: mononoki, monospace;
+    text-shadow: 0 1px #fff;
+  }
+  .md-fences {
+    margin: 15px auto;
+    padding: 0.7em 1em;
+    text-shadow: none;
+  }
