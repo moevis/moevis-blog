@@ -1,5 +1,7 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
+#![feature(custom_derive)]
+#![feature(never_type)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -12,6 +14,8 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
+use admin_router::static_rocket_route_info_for_login;
+use admin_router::static_rocket_route_info_for_login_page;
 use std::io::Read;
 use rocket::response::Failure;
 use rocket::http::Status;
@@ -27,12 +31,14 @@ mod siteconfig;
 mod post;
 mod util;
 mod page;
+mod admin_router;
 
 use post::Post;
 use context::{ Context, PostListContext, PageContext };
 use std::collections::HashMap;
 use util::render_markdown;
 use page::Page;
+use admin_router::{ login_page };
 
 #[get("/")]
 fn index() -> Template {
@@ -40,7 +46,13 @@ fn index() -> Template {
     Template::render("index", &arg) 
 }
 
-#[get("/pages/<page_name>")]
+#[get("/pages/posts", rank=1)]
+fn post_pages() -> Template {
+    let arg = PostListContext::new();
+    Template::render("index", &arg) 
+}
+
+#[get("/pages/<page_name>", rank=2)]
 fn site_pages(page_name: String) -> Result<Template, Failure> {
     let filename = format!("pages/{}.md", page_name);
     let mut content = String::new();
@@ -103,6 +115,9 @@ fn main() {
             posts,
             static_file,
             site_pages,
+            post_pages,
+            login_page,
+            login,
         ])
         .attach(Template::fairing())
         .catch(catchers![not_found])
